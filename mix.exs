@@ -28,6 +28,10 @@ defmodule Hastega.MixProject do
     ]
   end
 
+  defp description() do
+    "Hastega: Hyper Accelerator of Spreading Tasks for Elixir with GPU Activation"
+  end
+
   defp package() do
     [
       name: "hastega",
