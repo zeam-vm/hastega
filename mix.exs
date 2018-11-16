@@ -5,7 +5,7 @@ defmodule Hastega.MixProject do
     [
       app: :hastega,
       version: "0.0.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
