@@ -1,6 +1,6 @@
 defmodule Hastega.Util do
   @moduledoc """
-  Documentation for Hastega.
+  Documentation for Hastega.Util.
   """
 
   @doc """
