@@ -24,5 +24,7 @@ defmodule Hastega do
   end
 
   defmacro hastegastub do
+    :mnesia.dirty_all_keys(:functions)
+    |> IO.inspect
   end
 end

@@ -38,8 +38,16 @@ defmodule Hastega.Parser do
 
   def parse({:__block__, _env, body_list}) do
   	body_list
-  	|> Enum.map(& &1 |> parse() |> hd())
+  	|> Enum.map(& &1
+  		|> parse()
+  		|> hd() )
+  	|> Enum.reject(& &1 == :ignore)
   end
+
+  def parse({:hastegastub, _env, nil}) do
+  	[:ignore]
+  end
+
 
   defp parse_function_name(body), do: body |> hd |> elem(0)
 
