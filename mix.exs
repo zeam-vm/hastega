@@ -23,6 +23,7 @@ defmodule Hastega.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      { :constants,   "~> 0.1.0" },
       { :ex_doc,      ">= 0.0.0", only: :dev},
     ]
   end

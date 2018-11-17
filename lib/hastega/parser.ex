@@ -6,33 +6,42 @@ defmodule Hastega.Parser do
 
   @doc """
   		## Examples
-  		iex> {:__block__, [], []} |> Hastega.Parser.parse()
+  		iex> quote do end |> Hastega.Parser.parse()
   		[]
 
-  		iex> {:def, [line: 8], [{:func, [line: 8], [{:a, [line: 8], nil}]}, [do: {:a, [line: 8], nil}]]} |> Hastega.Parser.parse()
+  		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse()
   		[[function_name: :func, is_public: true, args: [:a]]]
+
+  		iex> (quote do
+  		...>   def func(a), do: funcp(a)
+  		...>   defp funcp(a), do: a
+  		...> end) |> Hastega.Parser.parse()
+  		[[function_name: :func, is_public: true, args: [:a]], [function_name: :funcp, is_public: false, args: [:a]]]
   """
-  def parse({:__block__, [], []}), do: []
-  def parse({:def, _env, body}), do: [[function_name: parse_function_name(body), is_public: true, args: parse_args(body)]]
+  def parse({:__block__, _env, []}), do: []
 
-  @doc """
-  		## Examples
-  		iex> {:def, [line: 5], [{:func, [line: 5], [{:a, [line: 5], nil}]}, [do: {:a, [line: 5], nil}]]} |> Hastega.Parser.parse_def()
-  		[function_name: :func, is_public: true]
+  def parse({:def, _env, body}) do
+  	[[
+  		function_name: parse_function_name(body),
+  		is_public: true,
+  		args: parse_args(body)
+  	]]
+  end
 
-  		iex> {:defp, [line: 5], [{:func, [line: 5], [{:a, [line: 5], nil}]}, [do: {:a, [line: 5], nil}]]} |> Hastega.Parser.parse_def()
-  		[function_name: :func, is_public: false]
+  def parse({:defp, _env, body}) do
+  	[[
+  		function_name: parse_function_name(body),
+  		is_public: false,
+  		args: parse_args(body)
+  	]]
+  end
 
-  """
-  def parse_def(element) do
-  	case element do
-  		{:def, _env, body} -> [function_name: parse_function_name(body), is_public: true]
-  		{:defp, _env, body} -> [function_name: parse_function_name(body), is_public: false]
-  	end
+  def parse({:__block__, _env, body_list}) do
+  	body_list
+  	|> Enum.map(& &1 |> parse() |> hd())
   end
 
   defp parse_function_name(body), do: body |> hd |> elem(0)
-
 
 	defp parse_args(body) do
 		body

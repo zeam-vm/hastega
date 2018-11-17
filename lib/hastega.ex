@@ -1,4 +1,6 @@
 defmodule Hastega do
+  require Hastega.Imports
+  import Hastega.Imports
   import Hastega.Util
   import Hastega.Parser
 
