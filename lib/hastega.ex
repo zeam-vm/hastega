@@ -25,6 +25,9 @@ defmodule Hastega do
 
   defmacro hastegastub do
     :mnesia.dirty_all_keys(:functions)
+    |> Enum.map(& :mnesia.dirty_read({:functions, &1}))
     |> IO.inspect
+
+    quote do end
   end
 end

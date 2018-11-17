@@ -41,11 +41,11 @@ defmodule Hastega.Parser do
   	|> Enum.map(& &1
   		|> parse()
   		|> hd() )
-  	|> Enum.reject(& &1 == :ignore)
+  	|> Enum.reject(& &1 == :ignore_parse)
   end
 
   def parse({:hastegastub, _env, nil}) do
-  	[:ignore]
+  	[:ignore_parse]
   end
 
 
