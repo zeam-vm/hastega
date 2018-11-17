@@ -31,4 +31,4 @@ use Mix.Config
 
 config :hastega,
 	start: :mnesia.start,
-	table: :mnesia.create_table( :functions, [ attributes: [ :id, :module_name, :function_name, :is_public ] ] )
+	table: :mnesia.create_table( :functions, [ attributes: [ :id, :module_name, :function_name, :is_public, :args ] ] )
