@@ -5,7 +5,7 @@ defmodule Hastega.MixProject do
     [
       app: :hastega,
       version: "0.0.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
@@ -23,8 +23,7 @@ defmodule Hastega.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      { :constants,   "~> 0.1.0" },
-      { :ex_doc,      ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
