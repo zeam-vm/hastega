@@ -12,7 +12,7 @@ defmodule Hastega do
 
   def on_load do
     case :mnesia.start do
-      :ok -> case :mnesia.create_table( :functions, [ attributes: [ :id, :module_name, :function_name, :is_public, :args ] ] ) do
+      :ok -> case :mnesia.create_table( :functions, [ attributes: [ :id, :module_name, :function_name, :is_public, :args, :do ] ] ) do
         {:atomic, :ok} -> :ok
         _ -> :err
       end
@@ -34,7 +34,8 @@ defmodule Hastega do
         "#{__CALLER__.module}",
         elem(&1, 1)[:function_name],
         elem(&1, 1)[:is_public],
-        elem(&1, 1)[:args]}))
+        elem(&1, 1)[:args],
+        elem(&1, 1)[:do]}))
 
     quote do
       unquote(clause)

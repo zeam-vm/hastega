@@ -24,7 +24,8 @@ defmodule Hastega.Parser do
   	[[
   		function_name: parse_function_name(body),
   		is_public: true,
-  		args: parse_args(body)
+  		args: parse_args(body),
+      do: parse_do(body)
   	]]
   end
 
@@ -32,7 +33,8 @@ defmodule Hastega.Parser do
   	[[
   		function_name: parse_function_name(body),
   		is_public: false,
-  		args: parse_args(body)
+  		args: parse_args(body),
+      do: parse_do(body)
   	]]
   end
 
@@ -59,4 +61,25 @@ defmodule Hastega.Parser do
 	end
 
   defp convert_args(arg_list), do: arg_list |> Enum.map(& elem(&1, 0))
+
+  defp parse_do(body) do
+    body
+    |> tl
+    |> hd
+    |> hd
+    |> parse_do_block()
+  end
+
+  defp parse_do_block({:do, do_body}), do: parse_do_body(do_body)
+
+  defp parse_do_body({:__block__, _env, []}), do: []
+
+  defp parse_do_body({:__block__, _env, body_list}) do
+    body_list
+    |> Enum.map(& &1
+      |> parse_do_body()
+      |> hd() )
+  end
+
+  defp parse_do_body(value), do: [value]
 end
