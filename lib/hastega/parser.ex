@@ -10,13 +10,13 @@ defmodule Hastega.Parser do
   		[]
 
   		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse()
-  		[[function_name: :func, is_public: true, args: [:a]]]
+  		[[function_name: :func, is_public: true, args: [:a], do: [{:a, [], Hastega.ParserTest}]]]
 
   		iex> (quote do
   		...>   def func(a), do: funcp(a)
   		...>   defp funcp(a), do: a
   		...> end) |> Hastega.Parser.parse()
-  		[[function_name: :func, is_public: true, args: [:a]], [function_name: :funcp, is_public: false, args: [:a]]]
+  		[[function_name: :func, is_public: true, args: [:a], do: [{:funcp, [], [{:a, [], Hastega.ParserTest}]}]], [function_name: :funcp, is_public: false, args: [:a], do: [{:a, [], Hastega.ParserTest}]]]
   """
   def parse({:__block__, _env, []}), do: []
 
