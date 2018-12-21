@@ -55,10 +55,10 @@ defmodule Hastega do
   end
 
   defmacro hastegastub do
-    functions = all_functions() |> Enum.map(& hd(read_function(&1)))
-
-    functions
+    all_functions()
+    |> Enum.map(& hd(read_function(&1)))
     |> Enum.map(& Hastega.Generator.generate_nif(&1))
+    |> IO.inspect
 
     quote do end
   end
