@@ -29,6 +29,8 @@ defmodule Hastega.Parser do
   def parse({:__block__, _env, []}), do: []
 
   def parse({:def, _env, body}) do
+    parse_nifs(body)
+
   	[[
   		function_name: parse_function_name(body),
   		is_public: true,
@@ -39,6 +41,8 @@ defmodule Hastega.Parser do
   end
 
   def parse({:defp, _env, body}) do
+    parse_nifs(body)
+
   	[[
   		function_name: parse_function_name(body),
   		is_public: false,
@@ -117,12 +121,12 @@ defmodule Hastega.Parser do
 
   defp parse_nifs_do_block({:do, do_body}, kl), do: parse_nifs_do_body(do_body, kl)
 
-  defp parse_nifs_do_body({:__block__, _env, []}, kl), do: []
+  defp parse_nifs_do_body({:__block__, _env, []}, _kl), do: []
 
   defp parse_nifs_do_body({:__block__, _env, body_list}, kl) do
     body_list
     |> Enum.map(& &1
-      |> parse_nifs_do_body()
+      |> parse_nifs_do_body(kl)
       |> hd() )
   end
 
@@ -130,7 +134,7 @@ defmodule Hastega.Parser do
     IO.inspect pipes
   end
 
-  defp parse_nifs_do_body(value, kl) do
+  defp parse_nifs_do_body(value, _kl) do
     [value]
   end
 end
