@@ -20,6 +20,25 @@ defmodule Hastega do
     end
   end
 
+  def write_function({key, value}, module) do
+    :mnesia.dirty_write({
+      :functions,
+      key,
+      module,
+      value[:function_name],
+      value[:is_public],
+      value[:args],
+      value[:do]})
+  end
+
+  def read_function(id) do
+    :mnesia.dirty_read({:functions, id})
+  end
+
+  def all_functions() do
+    :mnesia.dirty_all_keys(:functions)
+  end
+
   defmacro defhastega clause do
 
     functions = clause
@@ -28,14 +47,7 @@ defmodule Hastega do
 
     Stream.iterate(1, &(&1 + 1))
     |> Enum.zip(functions)
-    |> Enum.map(& :mnesia.dirty_write(
-      {:functions,
-        elem(&1, 0),
-        "#{__CALLER__.module}",
-        elem(&1, 1)[:function_name],
-        elem(&1, 1)[:is_public],
-        elem(&1, 1)[:args],
-        elem(&1, 1)[:do]}))
+    |> Enum.map(& write_function(&1, "#{__CALLER__.module}"))
 
     quote do
       unquote(clause)
@@ -43,8 +55,8 @@ defmodule Hastega do
   end
 
   defmacro hastegastub do
-    :mnesia.dirty_all_keys(:functions)
-    |> Enum.map(& :mnesia.dirty_read({:functions, &1}))
+    all_functions()
+    |> Enum.map(& read_function(&1))
     |> IO.inspect
 
     quote do end
