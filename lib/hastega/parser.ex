@@ -93,30 +93,44 @@ defmodule Hastega.Parser do
 
   defp parse_do_body(value), do: [value]
 
+  """
+    ## Examples
+
+    iex> Hastega.Parser.concat_name_nif(:name)
+    :name_nif
+  """
+  def concat_name_nif(name) do
+    name |> Atom.to_string |> Kernel.<>("_nif") |> String.to_atom
+  end
+
   defp parse_nifs(body) do
     body
     |> tl
     |> hd
     |> hd
-    |> parse_nifs_do_block()
+    |> parse_nifs_do_block([
+      function_name: (parse_function_name(body) |> concat_name_nif() ),
+      is_public: true,
+      args: parse_args(body),
+      is_nif: true])
   end
 
-  defp parse_nifs_do_block({:do, do_body}), do: parse_nifs_do_body(do_body)
+  defp parse_nifs_do_block({:do, do_body}, kl), do: parse_nifs_do_body(do_body, kl)
 
-  defp parse_nifs_do_body({:__block__, _env, []}), do: []
+  defp parse_nifs_do_body({:__block__, _env, []}, kl), do: []
 
-  defp parse_nifs_do_body({:__block__, _env, body_list}) do
+  defp parse_nifs_do_body({:__block__, _env, body_list}, kl) do
     body_list
     |> Enum.map(& &1
       |> parse_nifs_do_body()
       |> hd() )
   end
 
-  defp parse_nifs_do_body({:|>, _env, pipes}) do
+  defp parse_nifs_do_body({:|>, _env, pipes}, kl) do
     IO.inspect pipes
   end
 
-  defp parse_nifs_do_body(value) do
+  defp parse_nifs_do_body(value, kl) do
     [value]
   end
 end
