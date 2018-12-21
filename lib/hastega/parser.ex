@@ -17,6 +17,14 @@ defmodule Hastega.Parser do
   		...>   defp funcp(a), do: a
   		...> end) |> Hastega.Parser.parse()
   		[[function_name: :func, is_public: true, args: [:a], do: [{:funcp, [], [{:a, [], Hastega.ParserTest}]}]], [function_name: :funcp, is_public: false, args: [:a], do: [{:a, [], Hastega.ParserTest}]]]
+
+      iex> (quote do
+      ...>    def func(list) do
+      ...>      list
+      ...>      |> Enum.map(& &1)
+      ...>    end
+      ...> end) |> Hastega.Parser.parse()
+      [[function_name: :func, is_public: true, args: [:list], do: [{:|>, [context: Hastega.ParserTest, import: Kernel], [{:list, [], Hastega.ParserTest}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [], [{:&, [], [1]}]}]}]}]]]
   """
   def parse({:__block__, _env, []}), do: []
 
