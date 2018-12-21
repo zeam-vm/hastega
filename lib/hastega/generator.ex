@@ -4,7 +4,7 @@ defmodule Hastega.Generator do
   Documentation for Hastega.Generator.
   """
 
-  def generate_nif({:functions, id, module_name, function_name, is_public, args, body}) do
-  	{:functions, id, module_name, function_name, is_public, args, body}
+  def generate_nif({:functions, id, module_name, function_name, is_public, is_nif, args, body}) do
+  	{:functions, id, module_name, function_name, is_public, is_nif, args, body}
   end
 end
