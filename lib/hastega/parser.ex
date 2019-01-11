@@ -32,10 +32,10 @@ defmodule Hastega.Parser do
     parse_nifs(body)
 
   	[[
-  		function_name: parse_function_name(body),
+  		function_name: SumMag.parse_function_name(body),
   		is_public: true,
-  		args: parse_args(body),
-      do: parse_do(body),
+  		args: SumMag.parse_args(body),
+      do: SumMag.parse_do(body),
       is_nif: false
   	]]
   end
@@ -44,10 +44,10 @@ defmodule Hastega.Parser do
     parse_nifs(body)
 
   	[[
-  		function_name: parse_function_name(body),
+  		function_name: SumMag.parse_function_name(body),
   		is_public: false,
-  		args: parse_args(body),
-      do: parse_do(body),
+  		args: SumMag.parse_args(body),
+      do: SumMag.parse_do(body),
       is_nif: false
   	]]
   end
@@ -64,52 +64,16 @@ defmodule Hastega.Parser do
   	[:ignore_parse]
   end
 
-
-  defp parse_function_name(body), do: body |> hd |> elem(0)
-
-	defp parse_args(body) do
-		body
-		|> hd
-		|> elem(2)
-		|> convert_args()
-	end
-
-  defp convert_args(arg_list), do: arg_list |> Enum.map(& elem(&1, 0))
-
-  defp parse_do(body) do
-    body
-    |> tl
-    |> hd
-    |> hd
-    |> parse_do_block()
-  end
-
-  defp parse_do_block({:do, do_body}), do: parse_do_body(do_body)
-
-  defp parse_do_body({:__block__, _env, []}), do: []
-
-  defp parse_do_body({:__block__, _env, body_list}) do
-    body_list
-    |> Enum.map(& &1
-      |> parse_do_body()
-      |> hd() )
-  end
-
-  defp parse_do_body(value), do: [value]
-
-  defp concat_name_nif(name) do
-    name |> Atom.to_string |> Kernel.<>("_nif") |> String.to_atom
-  end
-
   defp parse_nifs(body) do
     body
     |> tl
     |> hd
     |> hd
     |> parse_nifs_do_block([
-      function_name: (parse_function_name(body) |> concat_name_nif() ),
+      function_name: (SumMag.parse_function_name(body)
+        |> SumMag.concat_name_nif() ),
       is_public: true,
-      args: parse_args(body),
+      args: SumMag.parse_args(body),
       is_nif: true])
   end
 
