@@ -56,12 +56,13 @@ defmodule Hastega.Parser do
     |> tl
     |> hd
     |> hd
-    |> parse_nifs_do_block([
-      function_name: (SumMag.parse_function_name(body, env)
+    |> parse_nifs_do_block(
+      [function_name: (SumMag.parse_function_name(body, env)
         |> SumMag.concat_name_nif(env) ),
-      is_public: true,
-      args: SumMag.parse_args(body, env),
-      is_nif: true], env)
+        is_public: true,
+        args: SumMag.parse_args(body, env),
+        is_nif: true],
+      env)
   end
 
   defp parse_nifs_do_block({:do, do_body}, kl, env), do: parse_nifs_do_body(do_body, kl, env)
