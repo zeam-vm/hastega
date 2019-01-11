@@ -2,6 +2,25 @@
 
 **Hastega: Hyper Accelerator of Spreading Tasks for Elixir with GPU Activation**
 
+For example, the following code of the function `map_square` will be compiled to native code using SIMD instructions by Hastega.
+
+```elixir
+defmodule M do
+  require Hastega
+  import Hastega
+
+  defhastega do
+    def map_square (list) do
+      list
+      |> Enum.map(& &1 * &1)
+    end
+
+    hastegastub
+  end
+end
+```
+
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
