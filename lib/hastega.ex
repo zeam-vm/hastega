@@ -21,6 +21,8 @@ defmodule Hastega do
         list
         |> Enum.map(& &1 * &1)
       end
+
+      hastegastub
     end
   end
   ```
