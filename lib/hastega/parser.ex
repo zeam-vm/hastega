@@ -26,31 +26,21 @@ defmodule Hastega.Parser do
       ...> end) |> Hastega.Parser.parse(%{target: :hastega})
       [[function_name: :func, is_public: true, args: [:list], do: [{:|>, [context: Hastega.ParserTest, import: Kernel], [{:list, [], Hastega.ParserTest}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [], [{:&, [], [1]}]}]}]}], is_nif: false ]]
   """
+  def parse({:hastegastub, _e, nil}, _env) do
+    [:ignore_parse]
+  end
+
+  def parse({:def, e, body}, env) do
+    parse_nifs(body, env)
+    SumMag.parse({:def, e, body}, env)
+  end
+
+  def parse({:defp, e, body}, env) do
+    parse_nifs(body, env)
+    SumMag.parse({:defp, e, body}, env)
+  end
+
   def parse({:__block__, _e, []}, _env), do: []
-
-  def parse({:def, _e, body}, env) do
-    parse_nifs(body, env)
-
-  	[[
-  		function_name: SumMag.parse_function_name(body, env),
-  		is_public: true,
-  		args: SumMag.parse_args(body, env),
-      do: SumMag.parse_do(body, env),
-      is_nif: false
-  	]]
-  end
-
-  def parse({:defp, _e, body}, env) do
-    parse_nifs(body, env)
-
-  	[[
-  		function_name: SumMag.parse_function_name(body, env),
-  		is_public: false,
-  		args: SumMag.parse_args(body, env),
-      do: SumMag.parse_do(body, env),
-      is_nif: false
-  	]]
-  end
 
   def parse({:__block__, _e, body_list}, env) do
   	body_list
@@ -60,9 +50,6 @@ defmodule Hastega.Parser do
   	|> Enum.reject(& &1 == :ignore_parse)
   end
 
-  def parse({:hastegastub, _e, nil}, _env) do
-  	[:ignore_parse]
-  end
 
   defp parse_nifs(body, env) do
     body
