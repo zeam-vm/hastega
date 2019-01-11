@@ -1,6 +1,6 @@
 # Hastega
 
-**TODO: Add description**
+**Hastega: Hyper Accelerator of Spreading Tasks for Elixir with GPU Activation**
 
 ## Installation
 
