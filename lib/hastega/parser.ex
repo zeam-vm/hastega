@@ -88,7 +88,7 @@ defmodule Hastega.Parser do
       |> hd() )
   end
 
-  defp parse_nifs_do_body({:|>, _env, pipes}, _kl, _env) do
+  defp parse_nifs_do_body({:|>, _e, pipes}, _kl, _env) do
     IO.inspect pipes
   end
 
