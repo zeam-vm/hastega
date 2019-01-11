@@ -97,13 +97,7 @@ defmodule Hastega.Parser do
 
   defp parse_do_body(value), do: [value]
 
-  """
-    ## Examples
-
-    iex> Hastega.Parser.concat_name_nif(:name)
-    :name_nif
-  """
-  def concat_name_nif(name) do
+  defp concat_name_nif(name) do
     name |> Atom.to_string |> Kernel.<>("_nif") |> String.to_atom
   end
 
