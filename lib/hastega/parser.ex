@@ -6,16 +6,16 @@ defmodule Hastega.Parser do
 
   @doc """
   		## Examples
-  		iex> quote do end |> Hastega.Parser.parse(%{})
+  		iex> quote do end |> Hastega.Parser.parse(%{target: :hastega})
   		[]
 
-  		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse(%{})
+  		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse(%{target: :hastega})
   		[[function_name: :func, is_public: true, args: [:a], do: [{:a, [], Hastega.ParserTest}], is_nif: false ]]
 
   		iex> (quote do
   		...>   def func(a), do: funcp(a)
   		...>   defp funcp(a), do: a
-  		...> end) |> Hastega.Parser.parse(%{})
+  		...> end) |> Hastega.Parser.parse(%{target: :hastega})
   		[[function_name: :func, is_public: true, args: [:a], do: [{:funcp, [], [{:a, [], Hastega.ParserTest}]}], is_nif: false ], [function_name: :funcp, is_public: false, args: [:a], do: [{:a, [], Hastega.ParserTest}], is_nif: false ]]
 
       iex> (quote do
@@ -23,7 +23,7 @@ defmodule Hastega.Parser do
       ...>      list
       ...>      |> Enum.map(& &1)
       ...>    end
-      ...> end) |> Hastega.Parser.parse(%{})
+      ...> end) |> Hastega.Parser.parse(%{target: :hastega})
       [[function_name: :func, is_public: true, args: [:list], do: [{:|>, [context: Hastega.ParserTest, import: Kernel], [{:list, [], Hastega.ParserTest}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [], [{:&, [], [1]}]}]}]}], is_nif: false ]]
   """
   def parse({:__block__, _e, []}, _env), do: []

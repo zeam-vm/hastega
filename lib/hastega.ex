@@ -32,7 +32,7 @@ defmodule Hastega do
 
     functions = clause
     |> Keyword.get(:do, nil)
-    |> parse(%{})
+    |> parse(%{target: :hastega})
 
     Stream.iterate(1, &(&1 + 1))
     |> Enum.zip(functions)
