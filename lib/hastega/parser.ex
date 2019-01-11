@@ -6,16 +6,16 @@ defmodule Hastega.Parser do
 
   @doc """
   		## Examples
-  		iex> quote do end |> Hastega.Parser.parse()
+  		iex> quote do end |> Hastega.Parser.parse(%{})
   		[]
 
-  		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse()
+  		iex> (quote do: def func(a), do: a) |> Hastega.Parser.parse(%{})
   		[[function_name: :func, is_public: true, args: [:a], do: [{:a, [], Hastega.ParserTest}], is_nif: false ]]
 
   		iex> (quote do
   		...>   def func(a), do: funcp(a)
   		...>   defp funcp(a), do: a
-  		...> end) |> Hastega.Parser.parse()
+  		...> end) |> Hastega.Parser.parse(%{})
   		[[function_name: :func, is_public: true, args: [:a], do: [{:funcp, [], [{:a, [], Hastega.ParserTest}]}], is_nif: false ], [function_name: :funcp, is_public: false, args: [:a], do: [{:a, [], Hastega.ParserTest}], is_nif: false ]]
 
       iex> (quote do
@@ -23,76 +23,76 @@ defmodule Hastega.Parser do
       ...>      list
       ...>      |> Enum.map(& &1)
       ...>    end
-      ...> end) |> Hastega.Parser.parse()
+      ...> end) |> Hastega.Parser.parse(%{})
       [[function_name: :func, is_public: true, args: [:list], do: [{:|>, [context: Hastega.ParserTest, import: Kernel], [{:list, [], Hastega.ParserTest}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [], [{:&, [], [1]}]}]}]}], is_nif: false ]]
   """
-  def parse({:__block__, _env, []}), do: []
+  def parse({:__block__, _e, []}, _env), do: []
 
-  def parse({:def, _env, body}) do
-    parse_nifs(body)
+  def parse({:def, _e, body}, env) do
+    parse_nifs(body, env)
 
   	[[
-  		function_name: SumMag.parse_function_name(body),
+  		function_name: SumMag.parse_function_name(body, env),
   		is_public: true,
-  		args: SumMag.parse_args(body),
-      do: SumMag.parse_do(body),
+  		args: SumMag.parse_args(body, env),
+      do: SumMag.parse_do(body, env),
       is_nif: false
   	]]
   end
 
-  def parse({:defp, _env, body}) do
-    parse_nifs(body)
+  def parse({:defp, _e, body}, env) do
+    parse_nifs(body, env)
 
   	[[
-  		function_name: SumMag.parse_function_name(body),
+  		function_name: SumMag.parse_function_name(body, env),
   		is_public: false,
-  		args: SumMag.parse_args(body),
-      do: SumMag.parse_do(body),
+  		args: SumMag.parse_args(body, env),
+      do: SumMag.parse_do(body, env),
       is_nif: false
   	]]
   end
 
-  def parse({:__block__, _env, body_list}) do
+  def parse({:__block__, _e, body_list}, env) do
   	body_list
   	|> Enum.map(& &1
-  		|> parse()
+  		|> parse(env)
   		|> hd() )
   	|> Enum.reject(& &1 == :ignore_parse)
   end
 
-  def parse({:hastegastub, _env, nil}) do
+  def parse({:hastegastub, _e, nil}, _env) do
   	[:ignore_parse]
   end
 
-  defp parse_nifs(body) do
+  defp parse_nifs(body, env) do
     body
     |> tl
     |> hd
     |> hd
     |> parse_nifs_do_block([
-      function_name: (SumMag.parse_function_name(body)
-        |> SumMag.concat_name_nif() ),
+      function_name: (SumMag.parse_function_name(body, env)
+        |> SumMag.concat_name_nif(env) ),
       is_public: true,
-      args: SumMag.parse_args(body),
-      is_nif: true])
+      args: SumMag.parse_args(body, env),
+      is_nif: true], env)
   end
 
-  defp parse_nifs_do_block({:do, do_body}, kl), do: parse_nifs_do_body(do_body, kl)
+  defp parse_nifs_do_block({:do, do_body}, kl, env), do: parse_nifs_do_body(do_body, kl, env)
 
-  defp parse_nifs_do_body({:__block__, _env, []}, _kl), do: []
+  defp parse_nifs_do_body({:__block__, _e, []}, _kl, _env), do: []
 
-  defp parse_nifs_do_body({:__block__, _env, body_list}, kl) do
+  defp parse_nifs_do_body({:__block__, _e, body_list}, kl, env) do
     body_list
     |> Enum.map(& &1
-      |> parse_nifs_do_body(kl)
+      |> parse_nifs_do_body(kl, env)
       |> hd() )
   end
 
-  defp parse_nifs_do_body({:|>, _env, pipes}, kl) do
+  defp parse_nifs_do_body({:|>, _env, pipes}, _kl, _env) do
     IO.inspect pipes
   end
 
-  defp parse_nifs_do_body(value, _kl) do
+  defp parse_nifs_do_body(value, _kl, _env) do
     [value]
   end
 end
