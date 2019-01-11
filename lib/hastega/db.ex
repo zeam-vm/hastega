@@ -1,5 +1,17 @@
 defmodule Hastega.Db do
 
+  @on_load :on_load
+
+  def on_load do
+    case :mnesia.start do
+      :ok -> case :mnesia.create_table( :functions, [ attributes: [ :id, :module_name, :function_name, :is_public, :is_nif, :args, :do ] ] ) do
+        {:atomic, :ok} -> :ok
+        _ -> :err
+      end
+      _ -> :err
+    end
+  end
+
   def write_function({key, value}, module) do
     :mnesia.dirty_write({
       :functions,
