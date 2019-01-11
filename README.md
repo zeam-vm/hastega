@@ -10,7 +10,7 @@ by adding `hastega` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:hastega, "~> 0.1.0"}
+    {:hastega, "~> 0.0.1"}
   ]
 end
 ```
