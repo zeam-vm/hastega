@@ -117,13 +117,13 @@ defmodule Hastega.Parser do
   end
 
   def func_with_num(kl, env) do
-    Keyword.put(kl, :target_func, (kl[:function_name] |> concat_name_num(env)))
+    Keyword.put(kl, :function_name, (kl[:function_name] |> concat_name_num(env)))
   end
 
-  def get_func_info(%{target_func: func_info}), do: func_info
+  def get_func_info(%{function_name: func_info}), do: func_info
 
   def merge_func_info(env, keyword) do
-    Map.put(env, :target_func, Keyword.merge(get_func_info(env), keyword))
+    Map.put(env, :function_name, Keyword.merge(get_func_info(env), keyword))
   end
 
   @doc """
