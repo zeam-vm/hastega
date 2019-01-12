@@ -99,9 +99,10 @@ defmodule Hastega.Parser do
     IO.inspect calling
     IO.puts "kl:"
     IO.inspect kl
+    ret = p_body ++ calling
+    env = merge_func_info(env, [do: ret])
     IO.puts "env:"
     IO.inspect env
-    ret = p_body ++ calling
     IO.puts "ret:"
     IO.inspect ret
     {ret, kl, env}
@@ -114,9 +115,56 @@ defmodule Hastega.Parser do
     IO.inspect calling
     IO.puts "kl:"
     IO.inspect kl
+    ret = [previous] ++ calling
+    env = merge_func_info(env, [do: ret])
     IO.puts "env:"
     IO.inspect env
-    {[previous] ++ calling, kl, env}
+    IO.puts "ret:"
+    IO.inspect ret
+    {ret, kl, env}
+  end
+
+  @doc """
+    ## Examples
+
+    iex> [{:list, [line: 6], nil}, {:&, [line: 7], [{:&, [line: 7], [1]}]}] |> Hastega.Parser.create_pipe()
+    {:|>, [context: Elixir, import: Kernel], [{:list, [line: 6], nil}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [line: 7], [{:&, [line: 7], [1]}]}]}]}
+
+    iex> [{:list, [line: 6], nil}, {:&, [line: 7], [{:&, [line: 7], [1]}]}, {:&, [line: 8], [{:&, [line: 8], [1]}]}] |> Hastega.Parser.create_pipe()
+    {:|>, [context: Elixir, import: Kernel], [{:|>, [context: Elixir, import: Kernel], [{:list, [line: 6], nil}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [line: 7], [{:&, [line: 7], [1]}]}]}
+    ]}, {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [line: 8], [{:&, [line: 8], [1]}]}]}]}
+  """
+  def create_pipe([a, b]) do
+    {:|>, [context: Elixir, import: Kernel], [
+      a,
+      create_enum_map(b)
+    ]}
+  end
+  def create_pipe([a, b | tail]) do
+    {:|>, [context: Elixir, import: Kernel],
+      [{:|>, [context: Elixir, import: Kernel], [
+        a,
+        create_enum_map(b)
+      ]}, create_pipe(tail)]}
+  end
+  def create_pipe([a]), do: create_enum_map(a)
+
+  @doc """
+    ## Examples
+
+    iex> {:&, [line: 7], [{:&, [line: 7], [1]}]} |> Hastega.Parser.create_enum_map()
+    {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [line: 7], [{:&, [line: 7], [1]}]}]}
+
+    iex> [{:&, [line: 7], [{:&, [line: 7], [1]}]}] |> Hastega.Parser.create_enum_map()
+    {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]}, [], [{:&, [line: 7], [{:&, [line: 7], [1]}]}]}
+  """
+  def create_enum_map([func]) do
+    create_enum_map(func)
+  end
+  def create_enum_map(func) do
+    {{:., [], [{:__aliases__, [alias: false], [:Enum]}, :map]},
+     [],
+     [func]}
   end
 
   @doc """
