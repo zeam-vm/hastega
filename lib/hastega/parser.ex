@@ -129,10 +129,22 @@ defmodule Hastega.Parser do
     Keyword.put(kl, :function_name, (kl[:function_name] |> SumMag.concat_name_num(env)))
   end
 
-  def get_func_info(%{function_name: func_info}), do: func_info
+  @doc """
+    ## Examples
 
+    iex> Hastega.Parser.get_func_info(%{nif: [function_name: :func]})
+    [function_name: :func]
+  """
+  def get_func_info(%{nif: func_info}), do: func_info
+
+  @doc """
+    ## Examples
+
+    iex> Hastega.Parser.merge_func_info(%{nif: [function_name: :func]}, [is_public: true])
+    %{nif: [function_name: :func, is_public: true]}
+  """
   def merge_func_info(env, keyword) do
-    Map.put(env, :function_name, Keyword.merge(get_func_info(env), keyword))
+    Map.put(env, :nif, Keyword.merge(get_func_info(env), keyword))
   end
 
 end
