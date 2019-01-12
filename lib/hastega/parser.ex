@@ -119,6 +119,12 @@ defmodule Hastega.Parser do
     {[previous] ++ calling, kl, env}
   end
 
+  @doc """
+    ## Examples
+
+    iex> Hastega.Parser.func_with_num([function_name: :func], %{num: 1})
+    [function_name: :func_1]
+  """
   def func_with_num(kl, env) do
     Keyword.put(kl, :function_name, (kl[:function_name] |> SumMag.concat_name_num(env)))
   end
