@@ -100,7 +100,7 @@ defmodule Hastega.Parser do
     IO.puts "kl:"
     IO.inspect kl
     ret = p_body ++ calling
-    env = merge_func_info(env, [do: ret])
+    env = merge_func_info(env, [do: create_pipe(ret)])
     IO.puts "env:"
     IO.inspect env
     IO.puts "ret:"
@@ -116,7 +116,7 @@ defmodule Hastega.Parser do
     IO.puts "kl:"
     IO.inspect kl
     ret = [previous] ++ calling
-    env = merge_func_info(env, [do: ret])
+    env = merge_func_info(env, [do: create_pipe(ret)])
     IO.puts "env:"
     IO.inspect env
     IO.puts "ret:"
