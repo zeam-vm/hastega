@@ -10,5 +10,5 @@
   "makeup_elixir": {:hex, :makeup_elixir, "0.10.0", "0f09c2ddf352887a956d84f8f7e702111122ca32fbbc84c2f0569b8b65cbf7fa", [:mix], [{:makeup, "~> 0.5.5", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.4.0", "ee261bb53214943679422be70f1658fff573c5d0b0a1ecd0f18738944f818efe", [:mix], [], "hexpm"},
   "poolboy": {:hex, :poolboy, "1.5.1", "6b46163901cfd0a1b43d692657ed9d7e599853b3b21b95ae5ae0a777cf9b6ca8", [:rebar], [], "hexpm"},
-  "sum_mag": {:hex, :sum_mag, "0.0.7", "9762251ba1a4b1152f66994988e82323fb734a568a5c1d7eaf4bc56296a18748", [:mix], [], "hexpm"},
+  "sum_mag": {:hex, :sum_mag, "0.0.8", "154363ee63ad8cd0a2548e44df197ebf0c9c80f510881e07b25f40eaff693008", [:mix], [], "hexpm"},
 }

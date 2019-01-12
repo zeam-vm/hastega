@@ -32,14 +32,14 @@ defmodule Hastega.Parser do
 
   def parse({:def, e, body}, env) do
     env = Map.put_new(env, :num, 0)
-    env = Map.put(env, :num, increment_nif(env))
+    env = Map.put(env, :num, SumMag.increment_nif(env))
     parse_nifs(body, env)
     SumMag.parse({:def, e, body}, env)
   end
 
   def parse({:defp, e, body}, env) do
     env = Map.put_new(env, :num, 0)
-    env = Map.put(env, :num, increment_nif(env))
+    env = Map.put(env, :num, SumMag.increment_nif(env))
     parse_nifs(body, env)
     SumMag.parse({:defp, e, body}, env)
   end
@@ -120,7 +120,7 @@ defmodule Hastega.Parser do
   end
 
   def func_with_num(kl, env) do
-    Keyword.put(kl, :function_name, (kl[:function_name] |> concat_name_num(env)))
+    Keyword.put(kl, :function_name, (kl[:function_name] |> SumMag.concat_name_num(env)))
   end
 
   def get_func_info(%{function_name: func_info}), do: func_info
@@ -129,29 +129,4 @@ defmodule Hastega.Parser do
     Map.put(env, :function_name, Keyword.merge(get_func_info(env), keyword))
   end
 
-  @doc """
-    ## Examples
-
-    iex> Hastega.Parser.increment_nif(%{num: 0})
-    1
-
-    iex> Hastega.Parser.increment_nif(%{num: 1})
-    2
-  """
-  def increment_nif(%{num: num}) do
-    num + 1
-  end
-
-  @doc """
-    ## Examples
-
-    iex> :func |> Hastega.Parser.concat_name_num(%{num: 1})
-    :func_1
-
-    iex> :fl |> Hastega.Parser.concat_name_num(%{num: 2})
-    :fl_2
-  """
-  def concat_name_num(name, %{num: num}) do
-    name |> Atom.to_string |> Kernel.<>("_#{num}") |> String.to_atom
-  end
 end
