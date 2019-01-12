@@ -101,7 +101,10 @@ defmodule Hastega.Parser do
     IO.inspect kl
     IO.puts "env:"
     IO.inspect env
-    {body, kl, env}
+    ret = p_body ++ calling
+    IO.puts "ret:"
+    IO.inspect ret
+    {ret, kl, env}
   end
 
   def parse_enum_map(previous, calling, kl, env) do
@@ -113,7 +116,7 @@ defmodule Hastega.Parser do
     IO.inspect kl
     IO.puts "env:"
     IO.inspect env
-    {calling, kl, env}
+    {[previous] ++ calling, kl, env}
   end
 
   def func_with_num(kl, env) do
