@@ -91,36 +91,14 @@ defmodule Hastega.Parser do
 
   def parse_enum_map({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, calling, kl, env) do
     {p_body, kl, env} = parse_enum_map(p, body, kl, env)
-    IO.puts "p_body:"
-    IO.inspect p_body
-    IO.puts "body:"
-    IO.inspect body
-    IO.puts "calling:"
-    IO.inspect calling
-    IO.puts "kl:"
-    IO.inspect kl
     ret = p_body ++ calling
     env = merge_func_info(env, [do: create_pipe(ret)])
-    IO.puts "env:"
-    IO.inspect env
-    IO.puts "ret:"
-    IO.inspect ret
     {ret, kl, env}
   end
 
   def parse_enum_map(previous, calling, kl, env) do
-    IO.puts "previous:"
-    IO.inspect previous
-    IO.puts "calling:"
-    IO.inspect calling
-    IO.puts "kl:"
-    IO.inspect kl
     ret = [previous] ++ calling
     env = merge_func_info(env, [do: create_pipe(ret)])
-    IO.puts "env:"
-    IO.inspect env
-    IO.puts "ret:"
-    IO.inspect ret
     {ret, kl, env}
   end
 
