@@ -82,21 +82,21 @@ defmodule Hastega.Parser do
   # match `p |> Enum.map(body)`
   defp parse_nifs_do_body({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, kl, env) do
     env = Map.put(env, :nif, SumMag.func_with_num(kl, env))
-    parse_enum_map(p, body, kl, env)
+    extract_enum_map(p, body, kl, env)
   end
 
   defp parse_nifs_do_body(value, _kl, _env) do
     [value]
   end
 
-  def parse_enum_map({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, calling, kl, env) do
-    {p_body, kl, env} = parse_enum_map(p, body, kl, env)
+  def extract_enum_map({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, calling, kl, env) do
+    {p_body, kl, env} = extract_enum_map(p, body, kl, env)
     ret = p_body ++ calling
     env = SumMag.merge_func_info(env, [do: create_pipe(ret)])
     {ret, kl, env}
   end
 
-  def parse_enum_map(previous, calling, kl, env) do
+  def extract_enum_map(previous, calling, kl, env) do
     ret = [previous] ++ calling
     env = SumMag.merge_func_info(env, [do: create_pipe(ret)])
     {ret, kl, env}
