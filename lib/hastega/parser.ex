@@ -82,7 +82,13 @@ defmodule Hastega.Parser do
   # match `p |> Enum.map(body)`
   defp parse_nifs_do_body({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, kl, env) do
     env = Map.put(env, :nif, SumMag.func_with_num(kl, env))
-    extract_enum_map(p, body, kl, env)
+    {previous, kl, env} = extract_enum_map(p, body, kl, env)
+    IO.puts "previous:"
+    IO.inspect previous
+    IO.puts "kl:"
+    IO.inspect kl
+    IO.puts "env:"
+    IO.inspect env
   end
 
   defp parse_nifs_do_body(value, _kl, _env) do
