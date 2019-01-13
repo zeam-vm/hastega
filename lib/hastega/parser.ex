@@ -81,7 +81,7 @@ defmodule Hastega.Parser do
 
   # match `p |> Enum.map(body)`
   defp parse_nifs_do_body({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, kl, env) do
-    env = Map.put(env, :nif, func_with_num(kl, env))
+    env = Map.put(env, :nif, SumMag.func_with_num(kl, env))
     parse_enum_map(p, body, kl, env)
   end
 
@@ -92,13 +92,13 @@ defmodule Hastega.Parser do
   def parse_enum_map({:|>, _e1, [p, {{:., _e2, [{:__aliases__, _e3, [:Enum]}, :map]}, _e4, body}]}, calling, kl, env) do
     {p_body, kl, env} = parse_enum_map(p, body, kl, env)
     ret = p_body ++ calling
-    env = merge_func_info(env, [do: create_pipe(ret)])
+    env = SumMag.merge_func_info(env, [do: create_pipe(ret)])
     {ret, kl, env}
   end
 
   def parse_enum_map(previous, calling, kl, env) do
     ret = [previous] ++ calling
-    env = merge_func_info(env, [do: create_pipe(ret)])
+    env = SumMag.merge_func_info(env, [do: create_pipe(ret)])
     {ret, kl, env}
   end
 
@@ -129,33 +129,4 @@ defmodule Hastega.Parser do
      [],
      [func]}
   end
-
-  @doc """
-    ## Examples
-
-    iex> Hastega.Parser.func_with_num([function_name: :func], %{num: 1})
-    [function_name: :func_1]
-  """
-  def func_with_num(kl, env) do
-    Keyword.put(kl, :function_name, (kl[:function_name] |> SumMag.concat_name_num(env)))
-  end
-
-  @doc """
-    ## Examples
-
-    iex> Hastega.Parser.get_func_info(%{nif: [function_name: :func]})
-    [function_name: :func]
-  """
-  def get_func_info(%{nif: func_info}), do: func_info
-
-  @doc """
-    ## Examples
-
-    iex> Hastega.Parser.merge_func_info(%{nif: [function_name: :func]}, [is_public: true])
-    %{nif: [function_name: :func, is_public: true]}
-  """
-  def merge_func_info(env, keyword) do
-    Map.put(env, :nif, Keyword.merge(get_func_info(env), keyword))
-  end
-
 end

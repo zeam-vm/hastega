@@ -24,7 +24,7 @@ defmodule Hastega.MixProject do
   defp deps do
     [
       { :constants,   "~> 0.1.0" },
-      { :sum_mag,     "~> 0.0.8" },
+      { :sum_mag,     "~> 0.0.9" },
       { :ex_doc,      ">= 0.0.0", only: :dev},
     ]
   end
