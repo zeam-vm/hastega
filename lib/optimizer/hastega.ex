@@ -4,7 +4,7 @@ defmodule Hastega do
   defmacro defhastega(functions) do
     functions
     |> optimize
-    # |> Macro.to_string |> Opt.inspect(label: "OPTIMIZE")
+    |> Opt.inspect(label: "OPTIMIZE")
 
     # functions |> Macro.to_string |> Opt.inspect(label: "original")
   end
@@ -25,14 +25,14 @@ defmodule Hastega do
     # 式ごとに最適化を行う．パイプでつながったコードは１つの式として扱える
     |> Enum.map(&( 
         &1
-        |> Opt.inspect(label: "This is one of expression")
+        # |> Opt.inspect(label: "This is one of expression")
         |> Macro.unpipe
-        |> Opt.inspect(label: "Unpipe expression")
+        # |> Opt.inspect(label: "Unpipe expression")
         # |> fusion_function
         |> replace_code
-        |> Opt.inspect(label: "END of OPTIMIZATION")
+        # |> Opt.inspect(label: "END of OPTIMIZATION")
         |> pipe
-        |> Opt.inspect(label: "PIPED")
+        # |> Opt.inspect(label: "PIPED")
         # |> Macro.to_string
         # |> Opt.inspect
       ))
@@ -113,6 +113,19 @@ defmodule Hastega.Enum do
     |> call_nif(:map)
   end
 
+  def replace_code({quoted, :chunk_every}) do
+    Opt.inspect "Find Enum.chunk_every"
+
+    {enum_ce, meta} = quoted
+
+    |> Func.delete_meta
+    |> Opt.inspect(label: "without meta")
+    
+    enum_ce
+    |> call_nif(:chunk_every)
+
+  end
+
   def replace_code({quoted, func}) do
     Opt.inspect "Sorry, not supported yet."
     quoted
@@ -141,6 +154,7 @@ defmodule Hastega.Enum do
     {_, func} = Macro.prewalk(ast, false,
       fn 
       (:map = ast, acc) -> {ast, :map}
+      (:chunk_every = ast, acc) ->{ast, :chunk_every}
       (other, acc) -> {other, acc}
       end)
 
@@ -149,6 +163,11 @@ defmodule Hastega.Enum do
 
   def to_map(quoted) do
     
+  end
+
+  def call_nif(ast, :chunk_every) do
+    {_enum_chunk_every, num} = ast
+    generate_simd_from_chunk_every_2(num)
   end
 
   def call_nif({:ok, asm}, :map) do
@@ -163,6 +182,10 @@ defmodule Hastega.Enum do
     right
     ) do
     quote do: VecSample.enum_map_mult_2
+  end
+
+  def generate_simd_from_chunk_every_2(num) do
+    quote do: VecSample.chunk_every
   end
 end
 
@@ -267,6 +290,11 @@ defmodule HastegaSample do
       list
       |> Enum.map(& &1 * 2)
       # |> Enum.map(fn x -> x * 3 end)
+    end
+
+    def chunk_e_2(list) do
+      list
+      |> Enum.chunk_every(2)
     end
   end
 end
