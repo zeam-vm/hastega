@@ -1,18 +1,18 @@
-defmodule Hastega do
-  @moduledoc """
-  Documentation for Hastega.
-  """
+# defmodule Hastega do
+#   @moduledoc """
+#   Documentation for Hastega.
+#   """
 
-  @doc """
-  Hello world.
+#   @doc """
+#   Hello world.
 
-  ## Examples
+#   ## Examples
 
-      iex> Hastega.hello
-      :world
+#       iex> Hastega.hello
+#       :world
 
-  """
-  def hello do
-    :world
-  end
-end
+#   """
+#   def hello do
+#     :world
+#   end
+# end
