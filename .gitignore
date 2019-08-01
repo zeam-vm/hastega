@@ -29,3 +29,6 @@ hastega-*.tar
 # Ignore 
 *.so
 *.plist
+
+# Ignore assembly code
+*.s
