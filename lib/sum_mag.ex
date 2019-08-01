@@ -310,4 +310,20 @@ defmodule SumMag do
   def quoted_var?(other) when other |> is_number, do: true
 
   def quoted_var?(other), do: nil
+
+  def divide_meta(ast) do
+    ast
+    |> Macro.prewalk([], fn 
+      ({atom, meta, tree}, acc) -> {{atom, tree}, acc ++ meta}
+      (other, acc) -> {other, acc}
+    end)
+  end
+  
+  def delete_meta(ast) do
+    ast
+    |> Macro.prewalk( fn 
+      {atom, meta, tree} -> {atom, tree}
+      other -> other
+    end)
+  end
 end
