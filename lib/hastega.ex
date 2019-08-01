@@ -97,6 +97,7 @@ end
 
 defmodule Hastega.Enum do
   import SumMag
+  import NifGenerator
 
   alias SumMag.Opt
   alias Hastega.Func
@@ -170,25 +171,13 @@ defmodule Hastega.Enum do
 
   def call_nif(ast, :chunk_every) do
     {_enum_chunk_every, num} = ast
-    generate_simd_from_chunk_every_2(num)
+    NifGenerator.generate_enum_chunk_every(num)
   end
 
   def call_nif({:ok, asm}, :map) do
     %{operator: operator, left: left, right: right} = asm
 
-    generate_simd_from_map_for_binomial_expr(operator, left, right)
-  end
-
-  def generate_simd_from_map_for_binomial_expr(
-    operator, 
-    left,
-    right
-    ) do
-    quote do: VecSample.enum_map_mult_2
-  end
-
-  def generate_simd_from_chunk_every_2(num) do
-    quote do: VecSample.chunk_every(4)
+    NifGenerator.generate_enum_map_for_binomial_expr(operator, left, right)
   end
 end
 
