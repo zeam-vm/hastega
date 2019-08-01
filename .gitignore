@@ -25,3 +25,7 @@ hastega-*.tar
 # Ignore snapshot for benchfella.
 /snapshots/
 *.snapshot
+
+# Ignore 
+*.so
+*.plist
