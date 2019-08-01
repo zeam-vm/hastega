@@ -298,16 +298,11 @@ defmodule SumMag do
   #   end
   # end
 
-  def quoted_var?({:&, [1]}) do
+  def quoted_var?({:&, _, [1]}) do
     true
   end
 
   def quoted_var?({atom, meta, nil}) 
-    when atom |> is_atom do
-      true
-  end
-
-  def quoted_var?({atom, nil}) 
     when atom |> is_atom do
       true
   end
