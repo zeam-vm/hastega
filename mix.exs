@@ -5,7 +5,8 @@ defmodule Hastega.MixProject do
     [
       app: :hastega,
       version: "0.0.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.6",
+      compilers: [:nif_vec] ++ Mix.compilers,
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
@@ -26,6 +27,7 @@ defmodule Hastega.MixProject do
       { :constants,   "~> 0.1.0" },
       { :sum_mag,     "~> 0.0.9" },
       { :ex_doc,      ">= 0.0.0", only: :dev},
+      {:benchfella, "~> 0.3.5"},
     ]
   end
 
@@ -40,5 +42,19 @@ defmodule Hastega.MixProject do
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => "https://github.com/zeam-vm/hastega"}
     ]
+  end
+end
+
+defmodule Mix.Tasks.Compile.NifVec do
+  def run(_) do
+    if match? {:win32, _}, :os.type do
+      # libpostal does not support Windows unfortunately.
+      IO.warn("Windows is not supported.")
+      exit(1)
+    else
+      File.mkdir_p("priv")
+      {result, _error_code} = System.cmd("make", ["priv/libnifvec.so"], stderr_to_stdout: true)
+      IO.binwrite result
+    end
   end
 end

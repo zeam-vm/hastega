@@ -6,12 +6,12 @@ defmodule Hastega.Util do
   @doc """
   wrap_do_clauses(do_clauses) returns do_clauses if do_clause is a list, otherwise wraps by a list.
 
-  	## Examples
+    ## Examples
 
-  	iex> Hastega.Util.wrap_do_clauses([1, 2])
-  	[1, 2]
-  	iex> Hastega.Util.wrap_do_clauses(1)
-  	[1]
+    iex> Hastega.Util.wrap_do_clauses([1, 2])
+    [1, 2]
+    iex> Hastega.Util.wrap_do_clauses(1)
+    [1]
 
   """
   def wrap_do_clauses(do_clauses) when is_list(do_clauses), do: do_clauses
